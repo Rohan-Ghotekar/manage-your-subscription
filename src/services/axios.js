@@ -7,7 +7,7 @@ const api = axios.create({
   //   'ngrok-skip-browser-warning': 'true',
   // },
  // withCredentials: true,
-  baseURL: 'http://13.201.8.73:1234',
+  baseURL: 'https://subscriptionmanagement.duckdns.org',
   headers:{
     'Content-Type': 'application/json' ,
   },
