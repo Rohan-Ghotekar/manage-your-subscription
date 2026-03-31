@@ -87,9 +87,10 @@ function Subscription() {
       } else {
         toast.error("Auto-renew turned OFF", { icon: "⚠️" });
       }
-    } catch (err) {
+    } catch(err) {
       setAutoRenew(previousState); // Revert if API fails
       toast.error("Failed to update auto-renew settings");
+      console.error("Auto-renew toggle error:", err);
     }
   };
 

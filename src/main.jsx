@@ -10,7 +10,6 @@ createRoot(document.getElementById('root')).render(
   <StrictMode>
     <ThemeProvider>
       <App />
-      <Toaster />
     </ThemeProvider>
   </StrictMode>,
 )
