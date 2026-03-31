@@ -52,6 +52,7 @@ function Profile() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    // ✅ Fetch profile only once on mount to prevent infinite loop from unstable context functions
     const fetchProfile = async () => {
       setFetching(true);
       try {
@@ -69,6 +70,7 @@ function Profile() {
       }
     };
     fetchProfile();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const showToast = (msg, type = "success") => {
@@ -118,7 +120,7 @@ function Profile() {
     if (!name.trim()) { setError("Name cannot be empty."); return; }
     if (!mobile.trim()) { setError("Mobile number cannot be empty."); return; }
     if (mobile.trim().length !== 10) { setError("Please enter a valid 10-digit mobile number."); return; }
-    if (!/^[0-9+\s\-]{7,15}$/.test(mobile.trim())) { setError("Please enter a valid mobile number."); return; }
+    if (!/^[0-9+\s-]{7,15}$/.test(mobile.trim())) { setError("Please enter a valid mobile number."); return; }
 
     setLoading(true);
     try {
@@ -151,7 +153,7 @@ function Profile() {
       <UserNavbar />
       <div className="user-shell">
         <UserSidebar />
-        <main className="user-content" style={{ padding: "20px 28px" }}>
+        <main className="user-content profile-page-content">
 
           {/* Toast */}
           {toast.msg && (
@@ -169,17 +171,17 @@ function Profile() {
           )}
 
           {/* Page title row */}
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "16px" }}>
+          <div className="profile-page-head">
             <div>
-              <h1 style={{ fontFamily: "var(--font-heading)", fontSize: "20px", fontWeight: 700, color: "var(--text-dark)", marginBottom: "2px" }}>
+              <h1 className="admin-page-title" style={{ marginBottom: "2px" }}>
                 My Profile
               </h1>
-              <p style={{ fontSize: "13px", color: "var(--text-muted)" }}>View and update your account details.</p>
+              <p className="profile-page-subtitle">View and update your account details.</p>
             </div>
           </div>
 
           {fetching ? (
-            <div style={{ background: "white", borderRadius: "12px", border: "1px solid var(--border)", padding: "40px", textAlign: "center", color: "var(--text-light)", fontSize: "14px" }}>
+            <div className="profile-loading-card">
               Loading profile...
             </div>
           ) : (
@@ -187,27 +189,27 @@ function Profile() {
               {fetchError && <div className="smp-error-msg" style={{ marginBottom: "12px" }}>{fetchError}</div>}
 
               {/* ── Single compact card ── */}
-              <div style={{ background: "white", borderRadius: "14px", border: "1px solid var(--border)", overflow: "hidden" }}>
+              <div className="profile-card profile-card-modern">
 
                 {/* Thin colour band */}
-                <div style={{ height: "56px", background: "linear-gradient(135deg, #0f4c3a, #1d9e75)" }} />
+                <div className="profile-header-band profile-header-band-modern" />
 
                 {/* Avatar + name + edit button row */}
-                <div style={{ padding: "0 24px", display: "flex", alignItems: "flex-end", justifyContent: "space-between", marginTop: "-28px", marginBottom: "14px" }}>
-                  <div style={{ display: "flex", alignItems: "flex-end", gap: "14px" }}>
+                <div className="profile-avatar-row profile-avatar-row-spread">
+                  <div className="profile-avatar-meta">
 
                     {/* Avatar */}
-                    <div style={{ position: "relative", flexShrink: 0 }}>
+                    <div className="profile-avatar-wrap">
                       {displayAvatar ? (
-                        <img src={displayAvatar} alt="Profile" style={{ width: "56px", height: "56px", borderRadius: "50%", objectFit: "cover", border: "3px solid white", boxShadow: "0 4px 12px rgba(0,0,0,0.1)" }} />
+                        <img src={displayAvatar} alt="Profile" className="profile-avatar-image" />
                       ) : (
-                        <div style={{ width: "56px", height: "56px", borderRadius: "50%", background: "white", border: "3px solid white", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "20px", fontFamily: "var(--font-heading)", fontWeight: 700, color: "var(--brand)", boxShadow: "0 4px 12px rgba(0,0,0,0.1)" }}>
+                        <div className="profile-avatar profile-avatar-modern">
                           {initials}
                         </div>
                       )}
                       {editing && (
                         <button type="button" onClick={() => fileInputRef.current?.click()} title="Upload photo"
-                          style={{ position: "absolute", bottom: 0, right: 0, width: "20px", height: "20px", borderRadius: "50%", background: "#0f4c3a", color: "white", border: "2px solid white", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", fontSize: "10px" }}>
+                          className="profile-avatar-upload-btn">
                           📷
                         </button>
                       )}
@@ -215,14 +217,18 @@ function Profile() {
                     </div>
 
                     {/* Name + role */}
-                    <div style={{ paddingBottom: "4px" }}>
-                      <div style={{ fontFamily: "var(--font-heading)", fontSize: "16px", fontWeight: 700, color: "var(--text-dark)", marginBottom: "3px" }}>{name}</div>
-                      <span style={{ display: "inline-block", background: "#dcfce7", color: "#166534", fontSize: "11px", fontWeight: 700, padding: "2px 8px", borderRadius: "20px" }}>User</span>
+                    <div className="profile-name-block">
+                      <div className="profile-name profile-name-modern">{name}</div>
+                      <span className="profile-role-badge">User</span>
+                      <div className="profile-meta-chips">
+                        <span className="profile-meta-chip">Joined {formatDate(createdAt)}</span>
+                        <span className="profile-meta-chip">Updated {formatDate(updatedAt)}</span>
+                      </div>
                     </div>
                   </div>
 
                   {/* Edit / Save / Cancel */}
-                  <div style={{ display: "flex", gap: "8px", paddingBottom: "4px" }}>
+                  <div className="profile-top-actions">
                     {!editing ? (
                       <button className="btn-admin-secondary" style={{ padding: "7px 14px", fontSize: "13px" }} onClick={() => setEditing(true)}>
                         ✏️ Edit
@@ -242,7 +248,7 @@ function Profile() {
 
                 {/* Photo upload bar */}
                 {photoFile && (
-                  <div style={{ margin: "0 24px 12px", background: "#f0fdf4", border: "1px solid #bbf7d0", borderRadius: "8px", padding: "10px 14px", display: "flex", alignItems: "center", gap: "10px" }}>
+                  <div className="profile-upload-strip">
                     <span style={{ fontSize: "13px" }}>📷</span>
                     <div style={{ flex: 1 }}>
                       <div style={{ fontSize: "12px", fontWeight: 600, color: "#166534" }}>{photoFile.name}</div>
@@ -258,29 +264,29 @@ function Profile() {
                 )}
 
                 {/* Errors */}
-                {photoError && <div style={{ margin: "0 24px 10px" }}><div className="smp-error-msg">{photoError}</div></div>}
-                {error      && <div style={{ margin: "0 24px 10px" }}><div className="smp-error-msg">{error}</div></div>}
+                {photoError && <div className="profile-inline-alert"><div className="smp-error-msg">{photoError}</div></div>}
+                {error      && <div className="profile-inline-alert"><div className="smp-error-msg">{error}</div></div>}
 
                 {/* ── Fields + Account info in one grid ── */}
-                <div style={{ padding: "0 24px 20px", display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
+                <div className="profile-fields profile-fields-compact">
 
                   {/* Full name */}
-                  <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
-                    <label style={{ fontSize: "11px", fontWeight: 600, color: "var(--text-light)", textTransform: "uppercase", letterSpacing: "0.06em" }}>Full name</label>
+                  <div className="profile-field">
+                    <label>Full name</label>
                     <input type="text" value={name} onChange={(e) => { setName(e.target.value); setError(""); }} disabled={!editing} placeholder="Your full name"
                       style={{ padding: "8px 12px", border: "1.5px solid var(--border)", borderRadius: "8px", fontSize: "13px", color: "var(--text-dark)", background: editing ? "white" : "var(--bg)", outline: "none" }} />
                   </div>
 
                   {/* Email */}
-                  <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
-                    <label style={{ fontSize: "11px", fontWeight: 600, color: "var(--text-light)", textTransform: "uppercase", letterSpacing: "0.06em" }}>Email address</label>
+                  <div className="profile-field">
+                    <label>Email address</label>
                     <input type="email" value={user?.email || ""} disabled
                       style={{ padding: "8px 12px", border: "1.5px solid var(--border)", borderRadius: "8px", fontSize: "13px", color: "var(--text-mid)", background: "var(--bg)", outline: "none" }} />
                   </div>
 
                   {/* Mobile */}
-                  <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
-                    <label style={{ fontSize: "11px", fontWeight: 600, color: "var(--text-light)", textTransform: "uppercase", letterSpacing: "0.06em" }}>
+                  <div className="profile-field">
+                    <label>
                       Mobile number {editing && <span style={{ color: "var(--text-light)", fontWeight: 400, textTransform: "none" }}>({mobile.length}/10)</span>}
                     </label>
                     <input type="tel" value={mobile}
@@ -290,39 +296,39 @@ function Profile() {
                   </div>
 
                   {/* Role */}
-                  <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
-                    <label style={{ fontSize: "11px", fontWeight: 600, color: "var(--text-light)", textTransform: "uppercase", letterSpacing: "0.06em" }}>Account role</label>
+                  <div className="profile-field">
+                    <label>Account role</label>
                     <input value="User" disabled
                       style={{ padding: "8px 12px", border: "1.5px solid var(--border)", borderRadius: "8px", fontSize: "13px", color: "var(--text-mid)", background: "var(--bg)", outline: "none" }} />
                   </div>
 
                   {/* Member since */}
-                  <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
-                    <label style={{ fontSize: "11px", fontWeight: 600, color: "var(--text-light)", textTransform: "uppercase", letterSpacing: "0.06em" }}>Member since</label>
+                  <div className="profile-field">
+                    <label>Member since</label>
                     <div style={{ padding: "8px 12px", border: "1.5px solid var(--border)", borderRadius: "8px", fontSize: "13px", color: "var(--text-mid)", background: "var(--bg)" }}>
                       {formatDate(createdAt)}
                     </div>
                   </div>
 
                   {/* Last updated */}
-                  <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
-                    <label style={{ fontSize: "11px", fontWeight: 600, color: "var(--text-light)", textTransform: "uppercase", letterSpacing: "0.06em" }}>Last updated</label>
+                  <div className="profile-field">
+                    <label>Last updated</label>
                     <div style={{ padding: "8px 12px", border: "1.5px solid var(--border)", borderRadius: "8px", fontSize: "13px", color: "var(--text-mid)", background: "var(--bg)" }}>
                       {formatDateTime(updatedAt)}
                     </div>
                   </div>
 
                   {/* Email verified */}
-                  <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
-                    <label style={{ fontSize: "11px", fontWeight: 600, color: "var(--text-light)", textTransform: "uppercase", letterSpacing: "0.06em" }}>Email verified</label>
+                  <div className="profile-field">
+                    <label>Email verified</label>
                     <div style={{ padding: "8px 12px", border: "1.5px solid #bbf7d0", borderRadius: "8px", fontSize: "13px", color: "#166534", fontWeight: 600, background: "#f0fdf4" }}>
                       ✓ Verified
                     </div>
                   </div>
 
                   {/* Last login */}
-                  <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
-                    <label style={{ fontSize: "11px", fontWeight: 600, color: "var(--text-light)", textTransform: "uppercase", letterSpacing: "0.06em" }}>Last login</label>
+                  <div className="profile-field">
+                    <label>Last login</label>
                     <div style={{ padding: "8px 12px", border: "1.5px solid var(--border)", borderRadius: "8px", fontSize: "13px", color: "var(--text-mid)", background: "var(--bg)" }}>
                       Today
                     </div>

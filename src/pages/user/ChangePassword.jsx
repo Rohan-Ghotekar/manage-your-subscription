@@ -42,10 +42,10 @@ function ChangePassword() {
     }
     const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
     if (!passwordRegex.test(newPassword)) {
-      setPasswordError(
+      setError(
         "Password must be at least 8 characters and include uppercase, lowercase, a number, and a special character."
       );
-      return;
+      return false;
     }
     
     if (newPassword === oldPassword) {
@@ -70,7 +70,16 @@ function ChangePassword() {
     setLoading(true)
     try {
       const data = await changePasswordAPI(oldPassword, newPassword)
-      setSuccess(data.message || 'Password changed successfully!')
+      const msg = data?.message || 'Password changed successfully!'
+      const isOldPasswordError = /incorrect|invalid|wrong/i.test(msg) && /old|current/i.test(msg)
+
+      if (isOldPasswordError) {
+        setError(msg)
+        setSuccess('')
+        return
+      }
+
+      setSuccess(msg)
       // Clear all fields after success
       setOldPassword('')
       setNewPassword('')

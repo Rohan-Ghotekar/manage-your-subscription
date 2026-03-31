@@ -8,6 +8,7 @@ const api = axios.create({
   // },
  // withCredentials: true,
   baseURL: 'https://subscriptionmanagement.duckdns.org',
+  // baseURL: 'http://localhost:1234',
   headers:{
     'Content-Type': 'application/json' ,
   },

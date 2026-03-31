@@ -28,7 +28,8 @@ function PlanModal({ plan, onSave, onClose, saving }) {
   });
   const [errors, setErrors] = useState({});
 
-  // Pre-fill form when editing an existing plan
+  // ✅ Pre-fill form when editing an existing plan
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (plan) {
       setForm({
@@ -265,7 +266,22 @@ function ManagePlans() {
 
   // ── Fetch all plans on mount ────────────────────────────────
   useEffect(() => {
-    fetchAllPlans();
+    const fetch = async () => {
+      setLoadingPlans(true);
+      try {
+        const data = await getAllPlansAPI();
+        setPlans(sortByLatest(data));
+        setCurrentPage(1);
+        localStorage.setItem("smp_plans", JSON.stringify(data));
+      } catch {
+        setFetchError("Failed to load plans.");
+        const cached = localStorage.getItem("smp_plans");
+        if (cached) setPlans(sortByLatest(JSON.parse(cached)));
+      } finally {
+        setLoadingPlans(false);
+      }
+    };
+    fetch();
   }, []);
   
 
@@ -275,6 +291,7 @@ const sortByLatest = (arr) =>
     (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
   ); 
   
+  // eslint-disable-next-line no-unused-vars
   const fetchAllPlans = async () => {
     setLoadingPlans(true);
     try {
@@ -421,7 +438,7 @@ const sortByLatest = (arr) =>
         setPlans(sortByLatest(data))
         setCurrentPage(1);
         localStorage.setItem("smp_plans", JSON.stringify(data));
-      } catch (err) {
+      } catch {
         showToast("Failed to load plans.", "error");
       } finally {
         setLoadingPlans(false);

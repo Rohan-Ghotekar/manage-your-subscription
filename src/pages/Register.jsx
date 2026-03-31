@@ -102,8 +102,13 @@ function Register() {
     }
     setVerifyLoading(true);
     try {
-      await verifyOtpAPI(email, enteredOtp);
-      setEmailVerified(true);
+      const res = await verifyOtpAPI(email, enteredOtp);
+
+if (res.status === "success") {
+  setEmailVerified(true);
+} else {
+  setOtpError(res.message || "Invalid OTP");
+}
     } catch (err) {
       setOtpError(err.response?.data?.message || "Incorrect OTP.");
     } finally {

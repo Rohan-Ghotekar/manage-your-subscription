@@ -16,7 +16,7 @@ function UserDashboard() {
         const data = await getMyActivePlanAPI();
         
         if (!data) {
-          setSub(null);
+          setSubscription(null);
           sessionStorage.removeItem(`smp_subscription_${user?.email}`);
           return;
         }
@@ -233,7 +233,7 @@ function UserDashboard() {
             <div
               style={{
                 display: "grid",
-                gridTemplateColumns: "repeat(4, 1fr)",
+                gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))",
                 gap: "12px",
               }}
             >
@@ -242,7 +242,7 @@ function UserDashboard() {
                   key={a.path}
                   onClick={() => navigate(a.path)}
                   style={{
-                    background: "white",
+                    background: "var(--bg-card)",
                     border: "1px solid var(--border)",
                     borderRadius: "12px",
                     padding: "20px 16px",

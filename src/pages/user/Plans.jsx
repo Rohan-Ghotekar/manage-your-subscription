@@ -109,7 +109,27 @@ function Plans() {
         event.detail?.action === "switch"
       ) {
         console.log("✅ Subscription was updated. Refreshing...");
-        fetchMySub();
+        getMyActivePlanAPI()
+          .then((data) => {
+            if (data && data.planId && data.planName) {
+              const subscription = {
+                subId: data.subId,
+                planId: String(data.planId),
+                planName: data.planName,
+                price: data.price || data.planPrice || data.Price || 0,
+                billing: data.billing || data.billingInterval,
+                startDate: data.startDate,
+                renewalDate: data.endDate,
+                status: data.status,
+              };
+              setCurrentSub(subscription);
+              sessionStorage.setItem(
+                `smp_subscription_${user?.email}`,
+                JSON.stringify(subscription),
+              );
+            }
+          })
+          .catch((err) => console.error("Error refreshing subscription:", err));
       }
     };
 
