@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import {
@@ -27,9 +27,31 @@ function Register() {
   const [loading, setLoading] = useState(false);
   const [emailStatus, setEmailStatus] = useState("");
   const [emailChecking, setEmailChecking] = useState(false);
+  const errorTimerRef = useRef(null);
 
   const { register } = useAuth();
   const navigate = useNavigate();
+
+  const showTimedError = (message, timeout = 2000) => {
+    setError(message);
+
+    if (errorTimerRef.current) {
+      clearTimeout(errorTimerRef.current);
+    }
+
+    errorTimerRef.current = setTimeout(() => {
+      setError((prev) => (prev === message ? "" : prev));
+      errorTimerRef.current = null;
+    }, timeout);
+  };
+
+  useEffect(() => {
+    return () => {
+      if (errorTimerRef.current) {
+        clearTimeout(errorTimerRef.current);
+      }
+    };
+  }, []);
 
   // ── Password Strength Rules ──────────────────────────────────
   const hasLetter = /[a-zA-Z]/.test(password);
@@ -54,7 +76,7 @@ function Register() {
           setEmailStatus("available");
         } else {
           setEmailStatus("taken");
-          setError("This email is already registered.");
+          showTimedError("This email is already registered.");
         }
       } catch {
         setEmailStatus("");
@@ -134,7 +156,7 @@ if (res.status === "success") {
     }
 
     if (emailStatus === false || emailStatus === "taken") {
-      setError("This email is already registered.");
+      showTimedError("This email is already registered.");
       return;
     }
 

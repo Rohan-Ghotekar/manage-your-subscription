@@ -77,19 +77,19 @@ function AdminSidebar() {
 
         {/* Insights */}
         <div className="sidebar-section-label">Insights</div>
-        <NavLink to="/admin/analytics" className={({ isActive }) =>
+        {/* <NavLink to="/admin/analytics" className={({ isActive }) =>
           'sidebar-item' + (isActive ? ' active' : '')
         }>
           <span className="sidebar-item-icon">📈</span>
           Analytics
-        </NavLink>
+        </NavLink> */}
         <NavLink to="/admin/users" className={({ isActive }) =>
           'sidebar-item' + (isActive ? ' active' : '')
         }>
           <span className="sidebar-item-icon">👥</span>
           Users
         </NavLink>
-        <NavLink
+        {/* <NavLink
           to="/admin/payments"
           className={({ isActive }) =>
             "sidebar-item" + (isActive ? " active" : "")
@@ -97,7 +97,7 @@ function AdminSidebar() {
         >
           <span className="sidebar-item-icon">💳</span>
           Payments
-        </NavLink>
+        </NavLink> */}
 
       </aside>
     </>
