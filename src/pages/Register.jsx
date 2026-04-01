@@ -54,6 +54,7 @@ function Register() {
           setEmailStatus("available");
         } else {
           setEmailStatus("taken");
+          setError("This email is already registered.");
         }
       } catch {
         setEmailStatus("");
@@ -132,7 +133,7 @@ if (res.status === "success") {
       return;
     }
 
-    if (emailStatus === "taken") {
+    if (emailStatus === false || emailStatus === "taken") {
       setError("This email is already registered.");
       return;
     }
